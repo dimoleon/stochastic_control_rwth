@@ -1,0 +1,8 @@
+.vscode/
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.gz
+*.log
+docs/_minted-main/

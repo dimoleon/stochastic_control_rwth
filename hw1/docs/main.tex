@@ -1,0 +1,79 @@
+\documentclass[12pt]{article}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{fontspec}
+% \usepackage[left=1.06cm,top=0.9cm,right=1.06cm,bottom=0.49cm]{geometry}
+% \setmainfont{GFS Didot}
+\setmainfont{EB Garamond}
+
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=1.5cm,left=1cm,right=1cm]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\parindent}{0pt}
+
+
+% Useful packages
+\usepackage{graphicx}
+\graphicspath{{./media/}}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{siunitx}
+\usepackage{sectsty}
+\sectionfont{\fontsize{12}{15}\selectfont}
+\renewcommand{\labelenumi}{\alph{enumi})}
+
+\title{\vspace{-2cm} Stochastic Control \\ 
+        \large Homework Project 1 \\
+        Reinforcement Learning with Policy Gradient}
+\author{Ioannis Dimoulios \\ 
+        \small Mat. Num. 470364}
+\date{Winter Semester 2024}
+
+\lhead{Stochastic Control}
+\chead{Homework Project 1}
+\rhead{Ioannis Dimoulios}
+\begin{document}
+\maketitle
+
+\section*{Problem 1} 
+a) The state space is \(\mathbb{X}\) is defined by the set 
+\begin{equation*}
+    \mathbb{X} = \{(y, z) | \, y \in \{1, \ldots, 5\}, \, z \in \{1, \ldots, 10\}\}. 
+\end{equation*}
+
+b) The action space can be defined as follows
+\begin{equation*}
+    \mathbb{U} = \{s, \nu, d\}, 
+\end{equation*}
+where, assuming \( (y, z) \) is the current state of the the robot,  
+\begin{itemize}
+    \item \(s \) stands for \textit{same}, i.e. the robot stays on the same \(y \) and moves only on the \(z \) direction with \(z \leq 9 \),
+    \item \(\nu \) stands for \textit{up}, i.e. the robot increments both its \(y \) and \(z \) coordinates with \(z \leq 9 \) and \(y \leq 4\), 
+    \item \(d \) stands for \textit{down}, i.e. the robot decrements its \(y \) coordinate and increments the \(z \) coordinate with \(z \leq 9 \) and \(y \geq 2\).
+\end{itemize}
+
+c) Let 
+\begin{equation*}
+    \mathcal{B} = \{-r_\text{obst }, -r_\text{diag}, r_\text{end }\},
+\end{equation*} 
+where \(r_\text{end} \gg r_\text{obst} > r_\text{diag } \). 
+The reward set \(\mathcal{R }\) can be defined as follows
+\begin{equation*}
+    \mathcal{R } = \left\{\sum_{x \in \mathcal{A}} x \, \big| \, \mathcal{A }  \subseteq \mathcal{B}\right\}.
+\end{equation*}
+
+Then, \(\mathcal{R }\) contains the sums of the elements of each subset of \(\mathcal{B }\). Note that \(0 \in \mathcal{R }\), as the sum of the elements of the empty subset. In this setting award 
+\begin{itemize}
+    \item \(-r_\text{obst} \) when the robot steps on an obstacle cell, 
+    \item \(-r_\text{diag} \) when the robot makes a diagonal movement, i.e. the action \(u \) is \(\nu \) or \(d \), 
+    \item \(r_\text{end }\) when the robot reaches a desired end position. 
+\end{itemize}
+If more than one of the above conditions apply for a movement of the robot, then award the sum of the corresponding values. If none apply, then award \(0\). \\
+
+d) 
+
+\end{document}
