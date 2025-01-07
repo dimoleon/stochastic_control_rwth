@@ -10,7 +10,7 @@ function softmax_log_grad(policy, state, action)
     if (action == 0) 
         return zeros(length(actions))
     end
-    prob = -policy[state]
+    prob = -policy[state[1], state[2]]
     prob[action] += 1 
 
     return prob

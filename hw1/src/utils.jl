@@ -52,13 +52,13 @@ end
 
 function create_policy(θ, policy_func)
     # policy = Dict((y, z) => policy_func(θ[y][z]) for y ∈ MINY:MAXY for z ∈ MINZ:MAXZ)
-    policy = Dict(state => policy_func(θ[state]) for state ∈ states) 
+    policy = policy_func.(θ)
 
     return policy 
 end
 
 function select_action(policy, curr_state)
-    weights = policy[curr_state] 
+    weights = policy[curr_state[1], curr_state[2]] 
     dist = Categorical(weights)
     return actions[rand(dist)]
 end
@@ -94,15 +94,15 @@ function sample_episode(state_initial, policy)
     return path 
 end
 
-function print_theta(θ) 
-    for z ∈ MINZ:MAXZ
-        for y ∈ MINY:MAXY
-            val = round.(θ[(y,z)]; digits=2)
-            println("($y, $z) => $val")
-            # @printf("(%d, %d) => %.2f", y, z, val)
-        end
-    end
-end
+# function print_theta(θ) 
+#     for z ∈ MINZ:MAXZ
+#         for y ∈ MINY:MAXY
+#             val = round.(θ[(y,z)]; digits=2)
+#             println("($y, $z) => $val")
+#             # @printf("(%d, %d) => %.2f", y, z, val)
+#         end
+#     end
+# end
 
 function random_theta_generator()
 
@@ -110,8 +110,8 @@ function random_theta_generator()
     helper(y, z, action) = action ∈ valid_actions((y,z)) ? rand() : 0
 
     # theta = [[[helper(y, z, action) for action ∈ actions] for z ∈ MINZ:MAXZ] for y ∈ MINY:MAXY] 
-    theta = Dict((y, z) => [helper(y, z, action) for action ∈ actions] for (y, z) ∈ states)
-
+    # theta = Dict((y, z) => [helper(y, z, action) for action ∈ actions] for (y, z) ∈ states)
+    theta = [[helper(y, z, action) for action ∈ actions] for y ∈ states_y, z ∈ states_z]
     return theta
 end
 
@@ -120,13 +120,11 @@ function uniform_theta_generator()
     # 0 does not allow particular action
     helper(y, z, action) = action ∈ valid_actions((y,z)) ? 1.0 : 0
 
-    # theta = [[[helper(y, z, action) for action ∈ actions] for z ∈ MINZ:MAXZ] for y ∈ MINY:MAXY] 
-    theta = Dict((y, z) => [helper(y, z, action) for action ∈ actions] for (y, z) ∈ states)
-
+    theta = [[helper(y, z, action) for action ∈ actions] for y ∈ states_y, z ∈ states_z]
     return theta
 end
 
 function policy_diff_max(policyA, policyB)
-    # returns infinite norm of the vector of diffs
-    return norm([policyA[k] - policyB[k] for k ∈ keys(policyA)], Inf) 
+    # policies are matrices of 3 element vectors
+    return norm(norm.(policyA - policyB))
 end

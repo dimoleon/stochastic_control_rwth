@@ -3,7 +3,7 @@ function policy_gradient(policy_func, grad_func, θ0, M, N; η = 0.003)
     pg_rewards = []
     policy_diffs = [] 
     updated_policy = create_policy(θ0, policy_func)
-    θ = Dict(θ0) 
+    θ = copy(θ0) 
     # for state_initial ∈ shuffle(valid_init_states)
     for state_initial ∈ sim_init_states
         for i ∈ 1:M 
@@ -14,7 +14,8 @@ function policy_gradient(policy_func, grad_func, θ0, M, N; η = 0.003)
                 trajectory_reward = sum([ω[t][3] for t ∈ eachindex(ω)])
                 rewards_tracker[j] = trajectory_reward
                 for (state, action, _) ∈ ω
-                    θ[state] += trajectory_reward*grad_func(updated_policy, state, action) * η / N
+                    y, z = state
+                    θ[y, z] += trajectory_reward*grad_func(updated_policy, state, action) * η / N
                 end
             end
 
@@ -39,7 +40,7 @@ function stochastic_policy_gradient(policy_func, grad_func, θ0, M; η = 0.01)
     spg_rewards = zeros(length(sim_init_states), M)
     policy_diffs = []
     updated_policy = create_policy(θ0, policy_func)
-    θ = Dict(θ0)
+    θ = copy(θ0)
     # for state_initial ∈ shuffle(valid_init_states)
     for state_initial ∈ sim_init_states
         for i ∈ 1:M
@@ -49,7 +50,8 @@ function stochastic_policy_gradient(policy_func, grad_func, θ0, M; η = 0.01)
             # push!(spg_rewards, trajectory_reward)
             spg_rewards[state_initial[1], i] = trajectory_reward
             for (state, action, _) ∈ ω
-                θ[state] += trajectory_reward*grad_func(updated_policy, state, action) * η
+                y, z = state
+                θ[y, z] += trajectory_reward*grad_func(updated_policy, state, action) * η
             end
 
             new_policy = create_policy(θ, policy_func) 
@@ -57,7 +59,7 @@ function stochastic_policy_gradient(policy_func, grad_func, θ0, M; η = 0.01)
             
             updated_policy = new_policy
 
-            # updated_policy = create_policy(θ, policy_func) 
+            updated_policy = create_policy(θ, policy_func) 
         end
     end
     spg_rewards_mean = [mean([spg_rewards[x, m] for x ∈ eachindex(sim_init_states)]) for m ∈ 1:M]

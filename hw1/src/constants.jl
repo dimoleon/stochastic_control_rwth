@@ -12,6 +12,8 @@ ROBST = -10
 RDIAG = -6 
 
 states = [(y, z) for z ∈ MINZ:MAXZ for y ∈ MINY:MAXY]
+states_y = [y for y ∈ MINY:MAXY]
+states_z = [z for z ∈ MINZ:MAXZ]
 goals = Set([(2, 10), (4, 10)])
 obstacles = Set([(2, 2), (4, 2), 
                 (3, 3), 

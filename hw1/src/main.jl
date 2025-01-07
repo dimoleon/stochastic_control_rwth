@@ -52,7 +52,7 @@ function plot_trajectory_with_probs(trajectory)
         # Add arrow indicating movement direction
         if i > 1
             prev_y, prev_z = trajectory[i - 1][1]
-            # arrow!([prev_z, z], [prev_y, y], lw=1, arrowhead=0.3, label=false)
+            plot!([prev_z, z], [prev_y, y], arrow=true, lw=1, arrowhead=0.3, label=false)
         end
     end
     
