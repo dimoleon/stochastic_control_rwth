@@ -1,5 +1,9 @@
 function policy_gradient(policy_func, grad_func, θ0, M, N; η = 0.003)
-    sim_init_states = valid_init_states[:]
+    # sim_init_states = reverse(states)
+    # sim_init_states = states[:]
+    # sim_init_states = copy(valid_init_states)
+    sim_init_states = reverse(valid_init_states)
+
     pg_rewards = []
     policy_diffs = [] 
     updated_policy = create_policy(θ0, policy_func)
@@ -20,7 +24,7 @@ function policy_gradient(policy_func, grad_func, θ0, M, N; η = 0.003)
             end
 
             # push!(pg_rewards, mean(rewards_tracker))
-            pg_rewards = vcat(pg_rewards, rewards_tracker)
+            # pg_rewards = vcat(pg_rewards, rewards_tracker)
 
             new_policy = create_policy(θ, policy_func) 
             for j ∈ 1:N
@@ -36,7 +40,8 @@ function policy_gradient(policy_func, grad_func, θ0, M, N; η = 0.003)
 end
 
 function stochastic_policy_gradient(policy_func, grad_func, θ0, M; η = 0.01)
-    sim_init_states = valid_init_states[:]
+    sim_init_states = reverse(valid_init_states)
+    # sim_init_states = reverse(states)
     spg_rewards = zeros(length(sim_init_states), M)
     policy_diffs = []
     updated_policy = create_policy(θ0, policy_func)

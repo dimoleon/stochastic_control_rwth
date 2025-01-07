@@ -94,15 +94,14 @@ function sample_episode(state_initial, policy)
     return path 
 end
 
-# function print_theta(θ) 
-#     for z ∈ MINZ:MAXZ
-#         for y ∈ MINY:MAXY
-#             val = round.(θ[(y,z)]; digits=2)
-#             println("($y, $z) => $val")
-#             # @printf("(%d, %d) => %.2f", y, z, val)
-#         end
-#     end
-# end
+function print_theta(θ) 
+    for z ∈ MINZ:MAXZ
+        for y ∈ MINY:MAXY
+            val = round.(θ[y,z]; digits=2)
+            println("($y, $z) => $val")
+        end
+    end
+end
 
 function random_theta_generator()
 
@@ -128,3 +127,52 @@ function policy_diff_max(policyA, policyB)
     # policies are matrices of 3 element vectors
     return norm(norm.(policyA - policyB))
 end
+
+function plot_queen(trajectory, policy)
+    grid = zeros(Int, MAXY, MAXZ)
+    
+    for (y, z) in obstacles
+        grid[y, z] = -1
+    end
+    for (y, z) in goals
+        grid[y, z] = 1
+    end
+
+    plot()
+    heatmap!(1:MAXZ, 1:MAXY, grid; color=:viridis, aspect_ratio=:equal, alpha=0.5)
+    
+    for (i, (state, action, reward)) in enumerate(trajectory)
+        y, z = state
+        
+        if i > 1
+            prev_y, prev_z = trajectory[i - 1][1]
+            plot!([prev_z, z], [prev_y, y], arrow=true, lw=1, arrowhead=0.3, label=false, color=:red)
+        end
+
+        if end_condition(state)
+            break
+        end
+        action_probs = policy[y, z][action]
+        scatter!([z], [y], color=:blue, label=false)
+        annotate!(z, y-1, text(string(round.(action_probs, digits=2)), color=:black, halign=:center, 7))
+    end
+    
+    xlabel!("Z")
+    ylabel!("Y")
+end
+
+function policy_episode_average(policy)
+    rewards = []
+    for x ∈ valid_init_states
+        ω = sample_episode(x, policy)
+        reward = sum([ω[t][3] for t ∈ eachindex(ω)])
+        push!(rewards, reward) 
+    end
+    return mean(rewards)
+end
+
+# # Plot all trajectories
+# for trajectory in trajectories
+#     plot_trajectory_with_probs(trajectory)
+#     sleep(1)  # Pause between plots to view each trajectory
+# end
