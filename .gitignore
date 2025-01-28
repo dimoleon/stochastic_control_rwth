@@ -5,4 +5,6 @@
 *.out
 *.gz
 *.log
+*.gif
 docs/_minted-main/
+Manifest.toml
